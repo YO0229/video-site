@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Video Site Log Watch Every 10 Minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=10min
+Unit=log-watch.service
+
+[Install]
+WantedBy=timers.target

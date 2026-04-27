@@ -1,0 +1,17 @@
+[video-site-nginx-auth]
+enabled = true
+port = http,https
+filter = nginx-http-auth
+logpath = /var/log/nginx/*error.log
+maxretry = 6
+findtime = 600
+bantime = 3600
+
+[video-site-nginx-badreq]
+enabled = true
+port = http,https
+filter = nginx-badbots
+logpath = /var/log/nginx/video-site.access.log
+maxretry = 30
+findtime = 300
+bantime = 1800
