@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=(), payment=(), usb=()" />
+  <title>流光视频 | 上传中心</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="page-upload">
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <h1>流光视频</h1>
+    </div>
+    <div class="header-actions">
+      <div class="search-wrap">
+        <input id="searchInput" type="search" placeholder="搜索视频标题、分类..." aria-label="搜索视频" autocomplete="off" spellcheck="false" title="支持空格多关键词，按 / 快速聚焦，Esc 清空，Enter 打开首个结果" />
+        <button id="clearSearchBtn" type="button" class="search-clear-btn hidden" aria-label="清空搜索">×</button>
+      </div>
+      <button id="openAuthBtn" class="btn btn-dark">登录 / 注册</button>
+      <div id="userBar" class="user-bar hidden">
+        <img id="currentUserAvatar" class="user-avatar hidden" alt="账号头像" />
+        <span id="currentUserText"></span>
+        <a id="adminPageLink" href="admin.html" class="btn btn-outline hidden">管理后台</a>
+        <button id="openAccountBtn" class="btn btn-outline">账号设置</button>
+        <button id="logoutBtn" class="btn btn-outline">退出</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="siteNoticeBanner" class="notice-banner hidden">
+      <strong>站点公告：</strong>
+      <span id="siteNoticeText"></span>
+    </section>
+
+    <section class="site-shortcuts" aria-label="站点导航">
+      <a href="index.html" class="nav-link">首页</a>
+      <a href="upload.html" class="nav-link active" aria-current="page">上传视频</a>
+      <a href="profile.html" class="nav-link">个人中心</a>
+    </section>
+
+    <section id="creatorSection" class="panel hidden">
+      <div class="list-header">
+        <p id="creatorHint">登录后可发布视频</p>
+      </div>
+      <p id="uploadPolicyHint" class="form-subhint"></p>
+      <form id="uploadForm" class="upload-grid">
+        <label>标题
+          <input id="uploadTitle" type="text" required maxlength="60" placeholder="输入视频标题" />
+        </label>
+        <label>分类
+          <input id="uploadCategory" type="text" required maxlength="20" placeholder="例如：电商短视频" />
+        </label>
+        <label>时长
+          <input id="uploadDuration" type="text" required maxlength="10" placeholder="例如：8:20" />
+        </label>
+        <label>发布时间
+          <input id="uploadPublishedAt" type="datetime-local" required />
+        </label>
+        <label class="span-2">简介          <textarea id="uploadDescription" rows="3" maxlength="220" placeholder="用 1-2 句话介绍这个视频"></textarea>
+        </label>
+        <div
+          class="span-2 upload-dropzone"
+          id="uploadVideoDropzone"
+          data-drop-input="uploadVideoFile"
+          role="button"
+          tabindex="0"
+          aria-label="上传本地视频"
+        >
+          <span class="dropzone-title">上传本地视频</span>
+          <div class="dropzone-input-row">
+            <input id="uploadVideoFile" type="file" accept="video/*" aria-label="选择本地视频文件" />
+            <button id="clearUploadVideoFileBtn" type="button" class="btn btn-outline btn-sm dropzone-clear hidden">移除</button>
+          </div>
+        </div>
+        <div
+          class="span-2 upload-dropzone"
+          id="uploadCoverDropzone"
+          data-drop-input="uploadCoverFile"
+          role="button"
+          tabindex="0"
+          aria-label="上传本地封面"
+        >
+          <span class="dropzone-title">上传本地封面</span>
+          <div class="dropzone-input-row">
+            <input id="uploadCoverFile" type="file" accept="image/*" aria-label="选择本地封面文件" />
+            <button id="clearUploadCoverFileBtn" type="button" class="btn btn-outline btn-sm dropzone-clear hidden">移除</button>
+          </div>
+        </div>
+        <div class="span-2 cover-preview-wrap">
+          <img id="uploadCoverPreview" class="upload-cover-preview hidden" alt="封面预览" />
+        </div>
+        <div class="span-2 form-actions">
+          <button type="submit" class="btn btn-primary">发布视频</button>
+          <p id="uploadStatus" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
+
+    <section class="hero" id="heroSection">
+      <div>
+        <p class="eyebrow">精选推荐</p>
+        <h2 id="heroTitle">正在加载...</h2>
+        <p id="heroDescription"></p>
+        <div class="hero-meta">
+          <span id="heroCategory"></span>
+          <span id="heroDuration"></span>
+          <span id="heroYear"></span>
+        </div>
+        <button id="playFeaturedBtn" class="btn btn-contrast">立即播放</button>
+      </div>
+      <img id="heroCover" alt="推荐封面" loading="eager" decoding="async" fetchpriority="high" referrerpolicy="no-referrer" />
+    </section>
+
+    <section id="continueSection" class="panel hidden">
+      <div class="list-header">
+        <h3>继续观看</h3>
+        <div class="list-header-tools">
+          <p id="continueMeta"></p>
+          <button id="clearContinueCompletedBtn" type="button" class="btn btn-outline btn-sm">清空已看完</button>
+          <button id="clearContinueBtn" type="button" class="btn btn-outline btn-sm">清空全部</button>
+        </div>
+      </div>
+      <div id="continueGrid" class="quick-grid"></div>
+    </section>
+
+    <section id="favoriteSection" class="panel hidden">
+      <div class="list-header">
+        <h3>我的收藏</h3>
+        <div class="list-header-tools">
+          <p id="favoriteMeta"></p>
+          <label class="sort-control mini-control" for="favoriteSortSelect">排序
+            <select id="favoriteSortSelect">
+              <option value="recent" selected>最近收藏</option>
+              <option value="title_asc">按标题</option>
+              <option value="progress_desc">进度从高到低</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div id="favoriteGrid" class="quick-grid"></div>
+    </section>
+
+    <section id="videoLibrarySection" class="panel">
+      <div class="list-header">
+        <h3>视频库</h3>
+        <div class="list-header-tools">
+          <p id="activeFilterSummary" class="filter-summary" aria-live="polite"></p>
+          <button id="clearFiltersBtn" type="button" class="btn btn-outline btn-sm hidden">清空筛选</button>
+          <p id="resultCount" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <section class="filters library-filters">
+        <p>分类筛选</p>
+        <div class="filter-tools">
+          <div id="categoryFilters"></div>
+          <button id="favoriteToggleBtn" type="button" class="chip">仅看收藏</button>
+          <button id="ownerToggleBtn" type="button" class="chip">只看我上传</button>
+          <label class="sort-control" for="sortSelect">排序
+            <select id="sortSelect">
+              <option value="latest" selected>最新上传</option>
+              <option value="oldest">最早上传</option>
+              <option value="year_desc">发布时间从新到旧</option>
+              <option value="year_asc">发布时间从旧到新</option>
+              <option value="duration_desc">时长从长到短</option>
+              <option value="duration_asc">时长从短到长</option>
+            </select>
+          </label>
+        </div>
+        <p id="libraryStatus" class="library-status" aria-live="polite"></p>
+      </section>
+
+      <div id="videoGrid" class="video-grid"></div>
+    </section>
+</main>
+
+  <div id="playerModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <button id="closePlayerModal" class="close-btn" aria-label="关闭播放器">×</button>
+      <h4 id="modalTitle"></h4>
+      <video id="videoPlayer" controls preload="metadata" playsinline></video>
+      <div class="player-tools">
+        <button id="rewindBtn" type="button" class="btn btn-outline">后退 10 秒</button>
+        <button id="forwardBtn" type="button" class="btn btn-outline">前进 10 秒</button>
+        <button id="muteBtn" type="button" class="btn btn-outline">静音</button>
+        <label class="speed-control" for="speedSelect">倍速          <select id="speedSelect">
+            <option value="0.75">0.75x</option>
+            <option value="1" selected>1.0x</option>
+            <option value="1.25">1.25x</option>
+            <option value="1.5">1.5x</option>
+            <option value="2">2.0x</option>
+          </select>
+        </label>
+        <label class="speed-control auto-next-control" for="autoNextToggle">自动连播
+          <input id="autoNextToggle" type="checkbox" />
+        </label>
+        <button id="shareCurrentVideoBtn" type="button" class="btn btn-outline">分享当前</button>
+        <button id="pipBtn" type="button" class="btn btn-outline">画中画</button>
+        <button id="downloadVideoBtn" type="button" class="btn btn-outline">下载视频</button>
+        <button id="fullscreenBtn" type="button" class="btn btn-outline">全屏</button>
+      </div>
+      <p class="player-close-hint">关闭方式：点击右上角 <kbd>X</kbd> 或按键盘 <kbd>Esc</kbd></p>
+      <div id="resumeBar" class="resume-bar hidden">
+        <span id="resumeText"></span>
+        <div class="resume-actions">
+          <button id="resumePlayBtn" type="button" class="btn btn-primary">继续播放</button>
+          <button id="resumeRestartBtn" type="button" class="btn btn-outline">从头播放</button>
+        </div>
+      </div>
+      <div id="nextUpBar" class="next-up-bar hidden">
+        <span id="nextUpText"></span>
+        <button id="playNextBtn" type="button" class="btn btn-outline">播放下一条</button>
+      </div>
+      <p id="playerStatus" class="player-status" aria-live="polite"></p>
+      <p id="modalDescription"></p>
+      <section id="relatedSection" class="related-section hidden">
+        <div class="related-header">
+          <h5>猜你喜欢</h5>
+          <p>基于标题、分类和标签推荐</p>
+        </div>
+        <div id="relatedList" class="related-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <div id="authModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-content auth-content">
+      <button id="closeAuthModal" class="close-btn" aria-label="关闭">×</button>
+      <div class="auth-header">
+        <h3 id="authTitle">欢迎回来</h3>
+        <p id="authSubtext">登录后可继续观看、收藏和发布视频。</p>
+      </div>
+      <div class="auth-tabs">
+        <button id="loginTabBtn" type="button" class="chip active" data-mode="login">登录</button>
+        <button id="registerTabBtn" type="button" class="chip" data-mode="register">注册</button>
+      </div>
+      <form id="authForm" class="auth-form" novalidate>
+        <label>用户名          <input id="authUsername" type="text" required minlength="3" maxlength="20" placeholder="至少 3 位" />
+        </label>
+        <label>密码
+          <div class="input-with-action">
+            <input id="authPassword" type="password" required minlength="6" maxlength="32" placeholder="请输入密码" />
+            <button id="authPasswordToggle" type="button" class="btn btn-outline btn-sm" aria-label="显示或隐藏密码">显示</button>
+          </div>
+        </label>
+        <label id="authConfirmRow" class="hidden">确认密码
+          <input id="authConfirmPassword" type="password" minlength="6" maxlength="32" placeholder="再次输入密码" />
+        </label>
+        <p id="authRule" class="form-subhint hidden">密码至少 8 位，且需包含字母和数字。</p>
+        <button id="authSubmitBtn" type="submit" class="btn btn-primary auth-submit-btn">登录</button>
+      </form>
+      <p id="authHint" class="auth-hint" aria-live="polite">请输入账号和密码登录。</p>
+    </div>
+  </div>
+  <div id="accountModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-content auth-content">
+      <button id="closeAccountModal" class="close-btn" aria-label="关闭">×</button>
+      <div class="list-header">
+        <h3>账号设置</h3>
+      </div>
+            <form id="accountForm" class="account-grid" novalidate>
+        <div class="span-2 account-avatar-row">
+          <img id="accountAvatarPreview" class="account-avatar-preview hidden" alt="头像预览" />
+        </div>
+        <div class="span-2 upload-dropzone account-avatar-dropzone" id="accountAvatarDropzone" role="button" tabindex="0" aria-label="设置头像">
+          <span class="dropzone-title">设置头像</span>
+          <div class="dropzone-input-row">
+            <input id="accountAvatarFile" type="file" accept="image/*" aria-label="选择头像图片" />
+            <button id="clearAccountAvatarBtn" type="button" class="btn btn-outline btn-sm dropzone-clear hidden">移除</button>
+          </div>
+        </div>
+        <label>账号名          <input id="accountUsername" type="text" minlength="3" maxlength="20" required placeholder="请输入账号名" />
+        </label>
+        <label>出生年月日          <input id="accountBirthDate" type="date" />
+        </label>
+        <label>性别
+          <select id="accountGender">
+            <option value="secret" selected>保密</option>
+            <option value="male">男</option>
+            <option value="female">女</option>
+            <option value="other">其他</option>
+          </select>
+        </label>
+        <label>年龄
+          <input id="accountAge" type="number" min="0" max="120" placeholder="例如：24" />
+        </label>
+        <div class="form-actions span-2">
+          <button type="submit" class="btn btn-primary">保存资料</button>
+          <a href="password.html" class="btn btn-outline">修改密码</a>
+          <p id="accountStatus" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="editVideoModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-content auth-content">
+      <button id="closeEditVideoModal" class="close-btn" aria-label="关闭">×</button>
+      <div class="list-header">
+        <h3>编辑视频</h3>
+        <p>修改已上传视频信息</p>
+      </div>
+      <form id="editVideoForm" class="account-grid" novalidate>
+        <label>标题
+          <input id="editVideoTitle" type="text" required maxlength="60" placeholder="输入视频标题" />
+        </label>
+        <label>分类
+          <input id="editVideoCategory" type="text" required maxlength="20" placeholder="例如：电商短视频" />
+        </label>
+        <label>时长
+          <input id="editVideoDuration" type="text" required maxlength="10" placeholder="例如：8:20" />
+        </label>
+        <label>发布时间
+          <input id="editVideoPublishedAt" type="datetime-local" required />
+        </label>
+        <label class="span-2">标签（逗号分隔）          <input id="editVideoTags" type="text" placeholder="例如：风景,旅行,户外" />
+        </label>
+        <label class="span-2">简介          <textarea id="editVideoDescription" rows="3" maxlength="220" placeholder="用 1-2 句话介绍这个视频"></textarea>
+        </label>
+        <div class="form-actions span-2">
+          <button type="submit" class="btn btn-primary">保存修改</button>
+          <p id="editVideoStatus" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
