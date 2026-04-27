@@ -1,7 +1,0 @@
-[Unit]
-Description=Video Site Log Watch
-After=network.target
-
-[Service]
-Type=oneshot
-ExecStart=/opt/video-site/security/monitor/log-watch.sh
